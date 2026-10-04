@@ -1,10 +1,72 @@
-const body=document.body,theme=document.getElementById('theme');const saved=localStorage.getItem('portfolio-theme');const prefersLight=matchMedia('(prefers-color-scheme:light)').matches;if(saved==='light'||(!saved&&prefersLight))body.classList.add('light');theme?.addEventListener('click',()=>{body.classList.toggle('light');localStorage.setItem('portfolio-theme',body.classList.contains('light')?'light':'dark')});document.getElementById('year').textContent=new Date().getFullYear();
+const body=document.body;
+const theme=document.getElementById('theme');
+const savedTheme=localStorage.getItem('portfolio-theme');
+if(savedTheme==='light'||(!savedTheme&&window.matchMedia('(prefers-color-scheme: light)').matches)){body.classList.add('light')}
+theme?.addEventListener('click',()=>{body.classList.toggle('light');localStorage.setItem('portfolio-theme',body.classList.contains('light')?'light':'dark')});
+const year=document.getElementById('year');if(year)year.textContent=new Date().getFullYear();
 
 const repos=[
-['blood-bank-module','Healthcare · Transfusion Medicine','private'],['cadre-system','Workforce Management','public'],['Car-Pass-Web-Application-NHK','Web Application','private'],['carPassNHK','Web Application','private'],['diet-management-apache','Hospital Operations','private'],['donor-registration-module','Healthcare · Donor Registration','private'],['explain-it-simply','Developer Tool','public'],['fhir-validator','Healthcare Interoperability','public'],['health-secuirty-scanner','Healthcare Cybersecurity','public'],['hospital-diet-management-system','Hospital Operations','private'],['hospital-theme','Healthcare UI','private'],['hospital-theme-website','Healthcare UI','private'],['InternalManagementSystem','Enterprise Management','private'],['internal_resource_mgmt','Resource Management','private'],['inventory-and-server-montioring-system','Infrastructure · Asset & Server Monitoring','public'],['Lalendra96.github.io','Portfolio','public'],['lansu-tender-document-builder','Government Procurement','private'],['Letter-Management','Document Management','private'],['lims','Healthcare · Laboratory','private'],['material-dashboard-laravel','Laravel · UI','public'],['msd-donations','Donation Management','public'],['polaris-app','Application','public'],['rdmp','Research Data Management','private'],['THPOPD','Healthcare · OPD','private'],['tuition-mgmt-system','Education Management','private']];
+['blood-bank-module','Healthcare · Transfusion Medicine','private'],
+['cadre-system','Workforce Management','public'],
+['Car-Pass-Web-Application-NHK','Web Application','private'],
+['carPassNHK','Web Application','private'],
+['diet-management-apache','Hospital Operations','private'],
+['donor-registration-module','Healthcare · Donor Registration','private'],
+['explain-it-simply','Developer Tool','public'],
+['fhir-validator','Healthcare Interoperability','public'],
+['health-secuirty-scanner','Healthcare Cybersecurity','public'],
+['hospital-diet-management-system','Hospital Operations','private'],
+['hospital-theme','Healthcare UI','private'],
+['hospital-theme-website','Healthcare UI','private'],
+['InternalManagementSystem','Enterprise Management','private'],
+['internal_resource_mgmt','Resource Management','private'],
+['inventory-and-server-montioring-system','Infrastructure · Asset & Server Monitoring','public'],
+['Lalendra96.github.io','Portfolio','public'],
+['lansu-tender-document-builder','Government Procurement','private'],
+['Letter-Management','Document Management','private'],
+['lims','Healthcare · Laboratory','private'],
+['material-dashboard-laravel','Laravel · UI','public'],
+['msd-donations','Donation Management','public'],
+['polaris-app','Application','public'],
+['rdmp','Research Data Management','private'],
+['THPOPD','Healthcare · OPD','private'],
+['tuition-mgmt-system','Education Management','private']
+];
 
-const activity=document.getElementById('activity');if(activity){const section=document.createElement('section');section.id='repositories';const books=repos.map(([name,domain,visibility],i)=>{const h=105+(i%6)*11,r=i%8===3?'-4deg':i%9===5?'3deg':'0deg',label=name.replaceAll('-',' ');return visibility==='public'?`<a class="repo-book public" style="--book-h:${h}px;--book-mobile-h:${Math.max(92,h-30)}px;--book-r:${r}" href="https://github.com/Lalendra96/${name}" target="_blank" rel="noopener" title="${domain} · Public repository">${label}<small>PUBLIC</small></a>`:`<span class="repo-book" style="--book-h:${h}px;--book-mobile-h:${Math.max(92,h-30)}px;--book-r:${r}" title="${domain} · Private repository">${label}<small>PRIVATE</small></span>`}).join('');const steps=['Clinical Systems','Operations','Interoperability','Security','Infrastructure','Engineering','Repositories'];section.innerHTML=`<div class="section-head reveal"><span>05 / ENGINEERING LIBRARY</span><h2>Every repository has a place in the engineering journey.</h2></div><p class="privacy reveal">Scroll upward through the staircase to the repository library. Public books open their GitHub repositories; private books remain visible as part of the portfolio without exposing protected source code.</p><div class="repo-staircase reveal"><div class="top-floor"><div class="floor-label"><span>TOP FLOOR · REPOSITORY LIBRARY</span><h3>25 projects, experiments & production systems.</h3></div><div class="bookshelf">${books}</div><div class="repo-legend"><span><b>PUBLIC</b> · open the book</span><span>PRIVATE · portfolio reference only</span></div></div><div class="stair-run">${steps.map((x,i)=>`<div class="stair-step ${i===steps.length-1?'active':''}" data-label="${String(i+1).padStart(2,'0')} · ${x}" style="--step-x:${i*5}%;--step-y:${i*47}px;transition-delay:${i*85}ms"></div>`).join('')}</div><div class="stair-caption"><strong>Engineering, one level at a time.</strong><p>The staircase represents the progression from clinical workflow understanding through software engineering, infrastructure and secure production delivery.</p></div></div>`;activity.parentNode.insertBefore(section,activity);const nav=document.querySelector('.nav nav');if(nav&&!nav.querySelector('a[href="#repositories"]')){const a=document.createElement('a');a.href='#repositories';a.textContent='Library';nav.insertBefore(a,nav.querySelector('a[href="#activity"]'))}}
+const repoList=document.getElementById('repo-list');
+const repoCount=document.getElementById('repo-count');
+if(repoList){
+  repoList.innerHTML=repos.map(([name,domain,visibility],index)=>{
+    const inner=`<span class="repo-num">${String(index+1).padStart(2,'0')}</span><span class="repo-name">${name}</span><span class="repo-domain">${domain}</span><span class="repo-visibility">${visibility.toUpperCase()}</span>`;
+    return visibility==='public'
+      ? `<a class="repo-row public" data-visibility="public" href="https://github.com/Lalendra96/${name}" target="_blank" rel="noopener">${inner}</a>`
+      : `<div class="repo-row private" data-visibility="private" title="Private repository">${inner}</div>`;
+  }).join('');
+}
+document.querySelectorAll('.repo-filter').forEach(button=>{
+  button.addEventListener('click',()=>{
+    document.querySelectorAll('.repo-filter').forEach(b=>b.classList.remove('active'));
+    button.classList.add('active');
+    const filter=button.dataset.filter;
+    let visible=0;
+    document.querySelectorAll('.repo-row').forEach(row=>{
+      const show=filter==='all'||row.dataset.visibility===filter;
+      row.hidden=!show;if(show)visible++;
+    });
+    if(repoCount)repoCount.textContent=`${visible} ${visible===1?'repository':'repositories'}`;
+  });
+});
 
-const cadre=document.querySelector('.cadre-feature .project-copy');if(cadre&&!cadre.querySelector('.repo-public-link')){const note=cadre.querySelector('.private-note');if(note)note.remove();const link=document.createElement('a');link.className='repo-public-link';link.href='https://github.com/Lalendra96/cadre-system';link.target='_blank';link.rel='noopener';link.textContent='View public repository →';cadre.appendChild(link)}
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}
+  });
+},{threshold:.08,rootMargin:'0px 0px -45px'});
+document.querySelectorAll('.reveal').forEach((el,index)=>{
+  el.style.transitionDelay=`${Math.min((index%4)*55,165)}ms`;
+  observer.observe(el);
+});
 
-const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}}),{threshold:.08,rootMargin:'0px 0px -35px'});document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=`${Math.min((i%4)*60,180)}ms`;observer.observe(el)});const glow=document.querySelector('.cursor-glow');if(glow&&!matchMedia('(prefers-reduced-motion: reduce)').matches){window.addEventListener('pointermove',e=>{glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px'},{passive:true})}document.querySelectorAll('.project,.credential,.contact-cards a').forEach(card=>{card.addEventListener('pointermove',e=>{if(innerWidth<900)return;const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${-y*1.5}deg) rotateY(${x*1.5}deg) translateY(-4px)`});card.addEventListener('pointerleave',()=>card.style.transform='')});
+document.querySelectorAll('a[href^="#"]').forEach(link=>{
+  link.addEventListener('click',()=>document.activeElement?.blur());
+});
